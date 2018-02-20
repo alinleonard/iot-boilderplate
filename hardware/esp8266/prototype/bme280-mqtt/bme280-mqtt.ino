@@ -31,7 +31,7 @@
 #define WIFI_PASSWORD ""
 
 // MQTT config
-#define MQTT_SERVER "192.168.1.12"
+#define MQTT_SERVER "192.168.1.2"
 #define MQTT_PORT 1883
 String topic = "/devies/" +  String(ESP.getChipId()) + "/events";
 
