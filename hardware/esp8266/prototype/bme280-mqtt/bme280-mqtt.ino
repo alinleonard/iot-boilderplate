@@ -28,7 +28,7 @@
 
 // Wifi config
 #define WIFI_SSID "DIGI-6E7A"
-#define WIFI_PASSWORD "brasov25BRASOV@%"
+#define WIFI_PASSWORD ""
 
 // MQTT config
 #define MQTT_SERVER "192.168.1.12"
