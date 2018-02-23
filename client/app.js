@@ -14,9 +14,13 @@ app.use(logger('dev'));
 console.log('Looking to connect to broker: ' + broker);
 
 client.on('connect', function () {
-  console.log('Connected to the broker');
+  console.log('Connected to the broker')
   client.subscribe('presence')
   client.publish('presence', 'Hello mqtt')
+  
+  client.subscribe('/devices/<device_id>/events/')
+  var obj = JSON.parse('{ "test": 123, "jooq": "231", "time": ' + Date() + '}')
+  client.publish('/devices/<device_id>/events/', obj)
 })
 
 client.on('message', function (topic, message) {

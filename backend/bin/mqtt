@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var mosca = require('mosca');
+var mqttWildcard = require('./libs/mqtt_wildcard');
 
 var pubsubsettings = {
   //using ascoltatore
@@ -24,6 +25,16 @@ function setup() {
   console.log('Mosca server is up and running');
 }
 
+// fired when a client subscribes to a topic
+server.on('subscribed', function(topic, client) {
+  console.log('subscribed : ', topic, client);
+});
+ 
+// fired when a client subscribes to a topic
+server.on('unsubscribed', function(topic, client) {
+  console.log('unsubscribed : ', topic, client);
+});
+
 // fired when a client connects
 server.on('clientConnected', function(client) {
     console.log('client connected', client.id);
@@ -35,6 +46,15 @@ server.on('clientDisconnected', function(client) {
 });
 
 // fired when a message is received
+// https://github.com/hobbyquaker/mqtt-wildcard
 server.on('published', function(packet, client) {
-  console.log('Published', packet.payload);
+	console.log('Published', packet.topic, packet.payload);
+	var events = mqttWildcard(packet.topic, 'devices/+/events/+');
+	if(events != null && events[0] != null){
+		var device_id = events[0];
+		// convert to JSON
+		var stringBuf = packet.payload.toString('utf-8');
+        var obj = JSON.parse(stringBuf);
+		console.log("Received: ", device_id, obj);
+	}
 });
