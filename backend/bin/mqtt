@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var mosca = require('mosca');
-var mqttWildcard = require('./libs/mqtt_wildcard');
+var mqttWildcard = require('../libs/mqtt_wildcard.js');
 
 var pubsubsettings = {
   //using ascoltatore
@@ -27,12 +27,12 @@ function setup() {
 
 // fired when a client subscribes to a topic
 server.on('subscribed', function(topic, client) {
-  console.log('subscribed : ', topic, client);
+  console.log('subscribed : ', topic, client.id);
 });
  
 // fired when a client subscribes to a topic
 server.on('unsubscribed', function(topic, client) {
-  console.log('unsubscribed : ', topic, client);
+  console.log('unsubscribed : ', topic, client.id);
 });
 
 // fired when a client connects
@@ -49,12 +49,17 @@ server.on('clientDisconnected', function(client) {
 // https://github.com/hobbyquaker/mqtt-wildcard
 server.on('published', function(packet, client) {
 	console.log('Published', packet.topic, packet.payload);
-	var events = mqttWildcard(packet.topic, 'devices/+/events/+');
+	var events = mqttWildcard(packet.topic, '/devices/+/events/+');
+	console.log("Events:", events);
 	if(events != null && events[0] != null){
 		var device_id = events[0];
 		// convert to JSON
-		var stringBuf = packet.payload.toString('utf-8');
-        var obj = JSON.parse(stringBuf);
-		console.log("Received: ", device_id, obj);
+		try {
+			var stringBuf = packet.payload.toString('utf-8');
+			var obj = JSON.parse(stringBuf);
+			console.log("Received: ", obj);
+		} catch(err) {
+			console.log("error: ", err);
+		}			
 	}
 });

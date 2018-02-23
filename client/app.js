@@ -18,9 +18,10 @@ client.on('connect', function () {
   client.subscribe('presence')
   client.publish('presence', 'Hello mqtt')
   
-  client.subscribe('/devices/<device_id>/events/')
-  var obj = JSON.parse('{ "test": 123, "jooq": "231", "time": ' + Date() + '}')
-  client.publish('/devices/<device_id>/events/', obj)
+  client.subscribe('/devices/<device_id>/events/sensor')
+  var obj = JSON.parse('{ "test": 123, "jooq": "231", "time": "' + Date.now() + '"}')
+  var buf = Buffer.from(JSON.stringify(obj));
+  client.publish('/devices/<device_id>/events/sensor', buf)
 })
 
 client.on('message', function (topic, message) {
